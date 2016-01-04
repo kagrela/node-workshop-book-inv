@@ -15,7 +15,7 @@ function getByIsbn(isbn) {
         .then(function (result) {
             return new Promise(function (resolve, reject) {
                 if (result.length === 0) {
-                    return resolve(null);
+                    return resolve();
                 }
                 return resolve(result[0]);
             });

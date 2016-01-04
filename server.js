@@ -1,4 +1,5 @@
-var app = require('./app');
+var booksRepository = require('./books-repository');
+var app = require('./app')(booksRepository);
 
 var server = app.listen(3000, function () {
     var host = server.address().address;

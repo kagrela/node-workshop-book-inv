@@ -1,5 +1,6 @@
 var request = require('supertest'),
-    app = require('../app.js');
+    booksRepository = require('./books-repository-in-mem'),
+    app = require('../app.js')(booksRepository);
 
 describe('POST /book', function(){
     it('returns book', function(done){
