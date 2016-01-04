@@ -1,3 +1,4 @@
+var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
 
@@ -8,7 +9,10 @@ var logRequest = function (req, res, next) {
 
 app.use(logRequest);
 
-app.get('/', function (req, res, next) {
+app.use(bodyParser.json());
+
+app.post('/stock', function (req, res, next) {
+    console.log('Saving isbn: %s, count: %s', req.body.isbn, req.body.count);
     res.send('Cool!');
 });
 
