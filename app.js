@@ -4,7 +4,11 @@ var bodyParser = require('body-parser'),
     MongoClient = require('mongodb').MongoClient,
     assert = require('assert');
 
+var collection = null;
 var url = 'mongodb://localhost:27017/bookinventory';
+var collection = MongoClient.connect(url).then(function (db) {
+    return db.collection('stocks');
+});
 
 var logRequest = function (req, res, next) {
     console.log('Req:', Date.now());
@@ -15,23 +19,17 @@ app.use(logRequest);
 
 app.use(bodyParser.json());
 
-
 app.post('/stock', function (req, res, next) {
-    MongoClient.connect(url, function (err, db) {
-        assert.equal(null, err);
-        console.log('Connected correctly to server');
-        // Get the documents collection
-        var collection = db.collection('stocks');
-        // Update document where a is 2, set b equal to 1
-        collection.updateOne({isbn: req.body.isbn}, {isbn: req.body.isbn, count: req.body.count}, {upsert: true},
-            function (err, result) {
-                db.close();
-                if (err) {
-                    return next(err);
-                }
-                res.send({isbn: req.body.isbn, count: req.body.count});
-            });
-    });
+    collection
+        .then(function (result) {
+            return result.updateOne({isbn: req.body.isbn}, {isbn: req.body.isbn, count: req.body.count}, {upsert: true});
+        })
+        .then(function (result) {
+            res.send({isbn: req.body.isbn, count: req.body.count});
+        })
+        .catch(function (error) {
+            return next(error);
+        });
 });
 
 function clientError(req, res, next) {
@@ -53,6 +51,3 @@ app.use(clientError);
 app.use(serverError);
 
 module.exports = app;
-
-//use updateOne function with upsert option
-//mongod by default starts on port 27017
