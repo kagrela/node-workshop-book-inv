@@ -6,14 +6,29 @@ var logRequest = function (req, res, next) {
     next();
 };
 
-app.get('/', logRequest, function (req, res, next) {
-    throw new Error('Its your fault');
+app.use(logRequest);
+
+app.get('/', function (req, res, next) {
+    res.send('Cool!');
 });
 
-app.use(function(err, req, res, next) {
+function clientError(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+}
+
+function serverError(err, req, res, next) {
+    res.status(err.status || 500);
     console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
+    res.json({
+        message: err.message,
+        error: (process.env.NODE_ENV !== 'production') ? err.toString() : {}
+    });
+}
+
+app.use(clientError);
+app.use(serverError);
 
 var server = app.listen(3000, function () {
     var host = server.address().address;
