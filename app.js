@@ -20,32 +20,23 @@ app.use(logRequest);
 
 app.use(bodyParser.json());
 
-app.get('/book/:isbn', function(req, res, next) {
-    collection
-        .then(function(result) {
-            return result.find({isbn: req.params.isbn}).toArray();
-        })
-        .then(function(result) {
-            if (result.length === 0) {
-                return next();
+app.get('/book/:isbn', function (req, res, next) {
+    booksRepository.getByIsbn(req.params.isbn)
+        .then(function (result) {
+            if (result) {
+                return res.send(result);
             }
-            res.send(result[0]);
-        })
-        .catch(function (error) {
-            return next(error);
+            return next();
         });
 });
 
 app.post('/book', function (req, res, next) {
-    collection
-        .then(function (result) {
-            return result.updateOne({isbn: req.body.isbn}, {isbn: req.body.isbn, count: req.body.count}, {upsert: true});
-        })
+    booksRepository.save({isbn: req.body.isbn, count: req.body.count})
         .then(function (result) {
             res.send({isbn: req.body.isbn, count: req.body.count});
         })
         .catch(function (error) {
-            return next(error);
+            next(error);
         });
 });
 
