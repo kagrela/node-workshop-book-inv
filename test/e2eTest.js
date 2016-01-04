@@ -1,14 +1,15 @@
 var request = require('supertest'),
     app = require('../app.js');
 
-describe('POST /stock', function(){
-    it('returns stock', function(done){
+describe('POST /book', function(){
+    it('returns book', function(done){
         request(app)
-            .post('/stock')
+            .post('/book')
             .set('Content-Type', 'application/json')
             .send({'isbn': '1617291781', 'count': 10})
             .expect(200, {
-                isbn: '1234567890'
+                isbn: '1617291781',
+                count: 10
             }, done);
     })
 });
