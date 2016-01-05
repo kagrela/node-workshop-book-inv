@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "test": "mocha"
+    "start": "server.js",
+    "test": "mocha",
+    "lint": "jshint --exclude=node_modules/** main/**/*.js bin/*.js",
+    "watch": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
